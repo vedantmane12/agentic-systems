@@ -1,0 +1,63 @@
+# Core AI Framework
+crewai
+crewai-tools
+
+# LangChain dependencies
+langchain
+langchain-openai
+langchain-community
+
+# FastAPI Backend
+fastapi
+uvicorn
+python-multipart
+websockets
+
+# Streamlit Frontend
+streamlit
+streamlit-extras
+
+# Data Processing
+pydantic
+pandas
+numpy
+
+# HTTP Client
+httpx
+requests
+
+# Web Scraping Tools
+beautifulsoup4
+lxml
+
+# Environment Management
+python-dotenv
+
+# Async Support
+asyncio
+aiofiles
+
+# Logging
+python-json-logger
+colorlog
+
+# Testing
+pytest
+pytest-asyncio
+pytest-cov
+
+# Code Quality
+black
+flake8
+isort
+
+# Monitoring & Debugging
+rich
+
+# Optional: If using Redis for caching
+# redis==5.0.1
+# aioredis==2.0.1
+
+# Optional: If using PostgreSQL for storing results
+# asyncpg==0.29.0
+# sqlalchemy==2.0.28
