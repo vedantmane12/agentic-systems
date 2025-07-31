@@ -18,7 +18,7 @@ from utils.api_client import SyncAPIClient
 
 # Page configuration
 st.set_page_config(
-    page_title="Research Assistant - Sync",
+    page_title="Research Assistant",
     page_icon="🔬",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -263,181 +263,142 @@ def main():
         except:
             st.info("No recent research")
     
-    # Main content
-    col1, col2 = st.columns([2, 1])
+    # Main content - Full width for research query
+    st.header("🔍 Research Query")
     
-    with col1:
-        st.header("🔍 Research Query")
-        
-        # Query input
-        query = st.text_area(
-            "Enter your research question:",
-            placeholder="Example: What are the latest developments in renewable energy storage technologies?",
-            height=100
+    # Query input
+    query = st.text_area(
+        "Enter your research question:",
+        placeholder="Example: What are the latest developments in renewable energy storage technologies?",
+        height=100
+    )
+    
+    # Buttons
+    col_btn1, col_btn2 = st.columns([1, 1])
+    
+    with col_btn1:
+        start_research = st.button(
+            "🔍 Start Research",
+            type="primary",
+            use_container_width=True,
+            disabled=not query.strip()
         )
-        
-        # Buttons
-        col_btn1, col_btn2 = st.columns([1, 1])
-        
-        with col_btn1:
-            start_research = st.button(
-                "🔍 Start Research",
-                type="primary",
-                use_container_width=True,
-                disabled=not query.strip()
-            )
-        
-        with col_btn2:
-            clear_results = st.button(
-                "🗑️ Clear Results",
-                use_container_width=True
-            )
-        
-        # Handle button clicks
-        if clear_results:
-            st.session_state.research_results = None
-            st.success("✅ Results cleared!")
-            st.rerun()
-        
-        if start_research and query.strip() and api_status.get("status") == "healthy":
-            research_config = {
-                "depth": research_depth.lower(),
-                "max_sources": max_sources,
-                "include_citations": include_citations
-            }
-            
-            # Execute research synchronously
-            st.info("🚀 Starting comprehensive research...")
-            st.warning("⏱️ This will take 2-4 minutes. Please wait...")
-            
-            # Create progress indicators
-            progress_bar = st.progress(0)
-            stage_text = st.empty()
-            time_text = st.empty()
-            
-            start_time = time.time()
-            
-            try:
-                # Show initial progress
-                progress_bar.progress(10)
-                stage_text.info("🔄 Submitting research request...")
-                
-                # Execute research with periodic UI updates
-                async def research_with_progress():
-                    # Start the research
-                    research_task = asyncio.create_task(
-                        st.session_state.sync_api_client.execute_research_sync(
-                            query, config=research_config
-                        )
-                    )
-                    
-                    # Update progress while waiting
-                    while not research_task.done():
-                        elapsed = time.time() - start_time
-                        
-                        # Estimate progress based on typical research time
-                        expected_duration = 180  # 3 minutes
-                        progress = min(10 + (elapsed / expected_duration * 85), 95)
-                        progress_bar.progress(int(progress))
-                        
-                        # Update stage text based on time
-                        if elapsed < 20:
-                            stage_text.info("🧠 Research Coordinator creating strategy...")
-                        elif elapsed < 60:
-                            stage_text.info("🔍 Information Gatherer searching sources...")
-                        elif elapsed < 120:
-                            stage_text.info("📊 Data Analyst processing information...")
-                        elif elapsed < 180:
-                            stage_text.info("✍️ Content Synthesizer creating report...")
-                        else:
-                            stage_text.info("🔬 Finalizing research and quality checks...")
-                        
-                        time_text.caption(f"⏱️ Elapsed time: {elapsed:.0f}s")
-                        
-                        await asyncio.sleep(2)
-                    
-                    return await research_task
-                
-                # Execute research with progress updates
-                result = asyncio.run(research_with_progress())
-                
-                # Handle results
-                if result.get("status") == "success":
-                    progress_bar.progress(100)
-                    stage_text.success("✅ Research completed successfully!")
-                    
-                    research_data = result["data"]
-                    st.session_state.research_results = research_data
-                    
-                    # Add to history
-                    st.session_state.research_history.append({
-                        "query": query,
-                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        "execution_time": research_data.get("execution_time", 0),
-                        "success": True
-                    })
-                    
-                    # Show success
-                    st.balloons()
-                    st.success("🎉 Research completed! Results are displayed below.")
-                    time.sleep(1)
-                    st.rerun()
-                
-                else:
-                    progress_bar.progress(0)
-                    stage_text.error("❌ Research failed!")
-                    error_msg = result.get("error", "Unknown error")
-                    st.error(f"Research Error: {error_msg}")
-                    
-                    # Add failed research to history
-                    st.session_state.research_history.append({
-                        "query": query,
-                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        "execution_time": time.time() - start_time,
-                        "success": False,
-                        "error": error_msg
-                    })
-                
-            except Exception as e:
-                progress_bar.progress(0)
-                stage_text.error("❌ Unexpected error!")
-                st.error(f"Error: {str(e)}")
     
-    with col2:
-        st.header("📊 System Metrics")
+    with col_btn2:
+        clear_results = st.button(
+            "🗑️ Clear Results",
+            use_container_width=True
+        )
+    
+    # Handle button clicks
+    if clear_results:
+        st.session_state.research_results = None
+        st.success("✅ Results cleared!")
+        st.rerun()
+    
+    if start_research and query.strip() and api_status.get("status") == "healthy":
+        research_config = {
+            "depth": research_depth.lower(),
+            "max_sources": max_sources,
+            "include_citations": include_citations
+        }
+        
+        # Execute research synchronously
+        st.info("🚀 Starting comprehensive research...")
+        st.warning("⏱️ This will take 2-4 minutes. Please wait...")
+        
+        # Create progress indicators
+        progress_bar = st.progress(0)
+        stage_text = st.empty()
+        time_text = st.empty()
+        
+        start_time = time.time()
         
         try:
-            metrics = asyncio.run(st.session_state.sync_api_client.get_metrics())
+            # Show initial progress
+            progress_bar.progress(10)
+            stage_text.info("🔄 Submitting research request...")
             
-            if "total_research" in metrics:
-                # Display metrics
-                st.metric("Total Research", metrics.get("total_research", 0))
-                st.metric("Success Rate", f"{metrics.get('success_rate', 0):.1f}%")
-                st.metric("Avg Time", f"{metrics.get('avg_execution_time', 0):.1f}s")
-                
-                # Success rate chart
-                if metrics.get("total_research", 0) > 0:
-                    success_data = {
-                        "Status": ["Successful", "Failed"],
-                        "Count": [metrics.get("successful", 0), metrics.get("failed", 0)]
-                    }
-                    
-                    fig = px.pie(
-                        values=success_data["Count"],
-                        names=success_data["Status"],
-                        title="Research Success Rate",
-                        color_discrete_map={
-                            "Successful": "#28a745",
-                            "Failed": "#dc3545"
-                        }
+            # Execute research with periodic UI updates
+            async def research_with_progress():
+                # Start the research
+                research_task = asyncio.create_task(
+                    st.session_state.sync_api_client.execute_research_sync(
+                        query, config=research_config
                     )
-                    fig.update_layout(height=300)
-                    st.plotly_chart(fig, use_container_width=True)
-            else:
-                st.info("No metrics available yet")
+                )
                 
+                # Update progress while waiting
+                while not research_task.done():
+                    elapsed = time.time() - start_time
+                    
+                    # Estimate progress based on typical research time
+                    expected_duration = 180  # 3 minutes
+                    progress = min(10 + (elapsed / expected_duration * 85), 95)
+                    progress_bar.progress(int(progress))
+                    
+                    # Update stage text based on time
+                    if elapsed < 20:
+                        stage_text.info("🧠 Research Coordinator creating strategy...")
+                    elif elapsed < 60:
+                        stage_text.info("🔍 Information Gatherer searching sources...")
+                    elif elapsed < 120:
+                        stage_text.info("📊 Data Analyst processing information...")
+                    elif elapsed < 180:
+                        stage_text.info("✍️ Content Synthesizer creating report...")
+                    else:
+                        stage_text.info("🔬 Finalizing research and quality checks...")
+                    
+                    time_text.caption(f"⏱️ Elapsed time: {elapsed:.0f}s")
+                    
+                    await asyncio.sleep(2)
+                
+                return await research_task
+            
+            # Execute research with progress updates
+            result = asyncio.run(research_with_progress())
+            
+            # Handle results
+            if result.get("status") == "success":
+                progress_bar.progress(100)
+                stage_text.success("✅ Research completed successfully!")
+                
+                research_data = result["data"]
+                st.session_state.research_results = research_data
+                
+                # Add to history
+                st.session_state.research_history.append({
+                    "query": query,
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "execution_time": research_data.get("execution_time", 0),
+                    "success": True
+                })
+                
+                # Show success
+                st.balloons()
+                st.success("🎉 Research completed! Results are displayed below.")
+                time.sleep(1)
+                st.rerun()
+            
+            else:
+                progress_bar.progress(0)
+                stage_text.error("❌ Research failed!")
+                error_msg = result.get("error", "Unknown error")
+                st.error(f"Research Error: {error_msg}")
+                
+                # Add failed research to history
+                st.session_state.research_history.append({
+                    "query": query,
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "execution_time": time.time() - start_time,
+                    "success": False,
+                    "error": error_msg
+                })
+            
         except Exception as e:
-            st.warning(f"Could not load metrics: {str(e)}")
+            progress_bar.progress(0)
+            stage_text.error("❌ Unexpected error!")
+            st.error(f"Error: {str(e)}")
     
     # Results display
     if st.session_state.research_results:
@@ -461,6 +422,68 @@ def main():
                 history_df[["timestamp", "query", "execution_time", "success"]],
                 use_container_width=True
             )
+    
+    # System Metrics - Now positioned after research history
+    st.markdown("---")
+    st.header("📊 System Metrics")
+    
+    try:
+        metrics = asyncio.run(st.session_state.sync_api_client.get_metrics())
+        
+        if "total_research" in metrics:
+            # Display metrics in columns
+            col_met1, col_met2, col_met3 = st.columns(3)
+            
+            with col_met1:
+                st.metric("Total Research", metrics.get("total_research", 0))
+            with col_met2:
+                st.metric("Success Rate", f"{metrics.get('success_rate', 0):.1f}%")
+            with col_met3:
+                st.metric("Avg Time", f"{metrics.get('avg_execution_time', 0):.1f}s")
+            
+            # Success rate chart
+            if metrics.get("total_research", 0) > 0:
+                col_chart1, col_chart2 = st.columns([1, 1])
+                
+                with col_chart1:
+                    success_data = {
+                        "Status": ["Successful", "Failed"],
+                        "Count": [metrics.get("successful", 0), metrics.get("failed", 0)]
+                    }
+                    
+                    fig = px.pie(
+                        values=success_data["Count"],
+                        names=success_data["Status"],
+                        title="Research Success Rate",
+                        color_discrete_map={
+                            "Successful": "#28a745",
+                            "Failed": "#dc3545"
+                        }
+                    )
+                    fig.update_layout(height=300)
+                    st.plotly_chart(fig, use_container_width=True)
+                
+                with col_chart2:
+                    # Additional metrics display
+                    st.markdown("### 📈 Performance Summary")
+                    st.write(f"**Total Queries Processed:** {metrics.get('total_research', 0)}")
+                    st.write(f"**Successful Completions:** {metrics.get('successful', 0)}")
+                    st.write(f"**Failed Attempts:** {metrics.get('failed', 0)}")
+                    st.write(f"**Average Processing Time:** {metrics.get('avg_execution_time', 0):.1f} seconds")
+                    
+                    if metrics.get('success_rate', 0) == 100:
+                        st.success("🎯 Perfect Success Rate!")
+                    elif metrics.get('success_rate', 0) >= 90:
+                        st.info("🌟 Excellent Performance!")
+                    elif metrics.get('success_rate', 0) >= 75:
+                        st.warning("⚠️ Good Performance")
+                    else:
+                        st.error("❌ Performance Issues")
+        else:
+            st.info("No metrics available yet - run some research to see performance data")
+            
+    except Exception as e:
+        st.warning(f"Could not load metrics: {str(e)}")
 
 if __name__ == "__main__":
     main()
