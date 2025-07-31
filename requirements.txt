@@ -16,6 +16,8 @@ websockets
 # Streamlit Frontend
 streamlit
 streamlit-extras
+plotly
+httpx
 
 # Data Processing
 pydantic
@@ -23,7 +25,6 @@ pandas
 numpy
 
 # HTTP Client
-httpx
 requests
 
 # Web Scraping Tools
