@@ -1,2 +1,10 @@
 .env
 *pycache*
+*chromadb*
+*.db
+*.sqlite3
+*.log
+*.pkl
+*.csv
+*.json
+*.md
