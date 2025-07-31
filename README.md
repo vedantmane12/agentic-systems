@@ -23,13 +23,10 @@ The AI Research Assistant is an advanced agentic AI system that demonstrates sop
 
 ## 🏗️ Architecture
 
-### Agent System
-```
-Research Coordinator  ──→  Information Gatherer
-        │                        │
-        ↓                        ↓
-Content Synthesizer  ←──  Data Analyst
-```
+### Architecture Diagram
+
+![Diagram](architecture-diagram.png)
+
 
 **Agents:**
 - **Research Coordinator**: Orchestrates workflow and creates research strategies
