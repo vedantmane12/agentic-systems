@@ -355,12 +355,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **OpenAI** for GPT model access
 - **Serper** for web search capabilities
 
-## 📞 Support
-
-- **Issues**: Please open a GitHub issue for bugs or feature requests
-- **Documentation**: Check the `/docs` folder for detailed technical documentation
-- **Examples**: See `/examples` for additional use cases and implementations
-
 ---
 
 **Built with ❤️ using CrewAI, FastAPI, and Streamlit**
