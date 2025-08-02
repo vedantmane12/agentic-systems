@@ -117,7 +117,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 SERPER_API_KEY=your_serper_api_key_here
 
 # Optional Configuration
-OPENAI_MODEL=gpt-4
+OPENAI_MODEL=gpt-4o-mini
 API_HOST=0.0.0.0
 API_PORT=8000
 CREW_VERBOSE=True
